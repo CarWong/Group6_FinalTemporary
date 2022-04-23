@@ -156,6 +156,13 @@ void DefaultSceneLayer::_CreateScene()
 
 		Texture2DArray::Sptr particleTex = ResourceManager::CreateAsset<Texture2DArray>("textures/particles.png", 2, 2);
 
+		//Final Textures & Meshes
+		MeshResource::Sptr sqrMesh = ResourceManager::CreateAsset<MeshResource>("platform2.obj");
+		
+		Texture2D::Sptr platformTex = ResourceManager::CreateAsset<Texture2D>("textures/Platform.png");
+		Texture2D::Sptr lavaTex = ResourceManager::CreateAsset<Texture2D>("textures/beans.png");
+		
+
 		//DebugWindow::Sptr debugWindow = app.GetLayer<ImGuiDebugLayer>()->GetWindow<DebugWindow>();
 
 #pragma region Basic Texture Creation
@@ -328,18 +335,54 @@ void DefaultSceneLayer::_CreateScene()
 			multiTextureMat->Set("u_Scale", 0.1f); 
 		}
 
+		// Final Materials
+
+		Material::Sptr platformMat = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			platformMat->Name = "platform";
+			platformMat->Set("u_Material.AlbedoMap", platformTex);
+			platformMat->Set("u_Material.Shininess", 0.1f);
+			platformMat->Set("u_Material.NormalMap", normalMapDefault);
+		}
+
+		Material::Sptr lavaMat = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			lavaMat->Name = "lava";
+			lavaMat->Set("u_Material.AlbedoMap", lavaTex);
+			lavaMat->Set("u_Material.Shininess", 0.1f);
+			lavaMat->Set("u_Material.NormalMap", normalMapDefault);
+		}
+
 		// Create some lights for our scene
 		GameObject::Sptr lightParent = scene->CreateGameObject("Lights");
 
-		for (int ix = 0; ix < 50; ix++) {
+		for (int ix = 0; ix < 1; ix++) {
 			GameObject::Sptr light = scene->CreateGameObject("Light");
-			light->SetPostion(glm::vec3(glm::diskRand(25.0f), 1.0f));
+			light->SetPostion(glm::vec3(-5.5f, -1.58f, 4.1f));
 			lightParent->AddChild(light);
 
 			Light::Sptr lightComponent = light->Add<Light>();
-			lightComponent->SetColor(glm::linearRand(glm::vec3(0.0f), glm::vec3(1.0f)));
-			lightComponent->SetRadius(glm::linearRand(0.1f, 10.0f));
-			lightComponent->SetIntensity(glm::linearRand(1.0f, 2.0f));
+			lightComponent->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
+			lightComponent->SetRadius(5.0f);
+			lightComponent->SetIntensity(10.0f);
+
+			GameObject::Sptr light2 = scene->CreateGameObject("Light2");
+			light2->SetPostion(glm::vec3(0.14f, -3.32f, 3.26f));
+			lightParent->AddChild(light2);
+
+			Light::Sptr lightComponent2 = light2->Add<Light>();
+			lightComponent2->SetColor(glm::vec3(0.902f, 0.02f,0.02f));
+			lightComponent2->SetRadius(10.0f);
+			lightComponent2->SetIntensity(5.0f);
+
+			GameObject::Sptr light3 = scene->CreateGameObject("Light3");
+			light3->SetPostion(glm::vec3(5.93, -1.86f, 4.76f));
+			lightParent->AddChild(light3);
+
+			Light::Sptr lightComponent3 = light3->Add<Light>();
+			lightComponent3->SetColor(glm::vec3(1.0f,1.0f,1.0f));
+			lightComponent3->SetRadius(5.0f);
+			lightComponent3->SetIntensity(10.0f);
 		}
 
 		// We'll create a mesh that is a simple plane that we can resize later
@@ -354,10 +397,8 @@ void DefaultSceneLayer::_CreateScene()
 		// Set up the scene's camera
 		GameObject::Sptr camera = scene->MainCamera->GetGameObject()->SelfRef();
 		{
-			camera->SetPostion({ -3, -1, 5 });
-			camera->LookAt(glm::vec3(0.0f));
-
-			camera->Add<SimpleCameraControl>();
+			camera->SetPostion({ 0, -4.750, 4 });
+			camera->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
 
 			// This is now handled by scene itself!
 			//Camera::Sptr cam = camera->Add<Camera>();
@@ -367,262 +408,118 @@ void DefaultSceneLayer::_CreateScene()
 
 
 		// Set up all our sample objects
-		GameObject::Sptr plane = scene->CreateGameObject("Plane");
+		GameObject::Sptr platform1 = scene->CreateGameObject("platform1");
 		{
-			// Make a big tiled mesh
-			MeshResource::Sptr tiledMesh = ResourceManager::CreateAsset<MeshResource>();
-			tiledMesh->AddParam(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(100.0f), glm::vec2(20.0f)));
-			tiledMesh->GenerateMesh();
+			platform1->SetPostion(glm::vec3(-5.35f, 0.0f, 0.0f));
+			platform1->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+			platform1->SetScale(glm::vec3(3.0f, 1.92f, 1.0f));
 
-			// Create and attach a RenderComponent to the object to draw our mesh
-			RenderComponent::Sptr renderer = plane->Add<RenderComponent>();
-			renderer->SetMesh(tiledMesh);
-			renderer->SetMaterial(boxMaterial);
+			Gameplay::Physics::RigidBody::Sptr physics = platform1->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Static);
+			Gameplay::Physics::BoxCollider::Sptr boxCollider = Gameplay::Physics::BoxCollider::Create();
+			boxCollider->SetScale(glm::vec3(3.0f, 1.92f, 1.0f));
+			physics->AddCollider(boxCollider);
 
-			// Attach a plane collider that extends infinitely along the X/Y axis
-			RigidBody::Sptr physics = plane->Add<RigidBody>(/*static by default*/);
-			physics->AddCollider(BoxCollider::Create(glm::vec3(50.0f, 50.0f, 1.0f)))->SetPosition({ 0,0,-1 });
+			RenderComponent::Sptr renderer = platform1->Add<RenderComponent>();
+			renderer->SetMesh(sqrMesh);
+			renderer->SetMaterial(platformMat);
 		}
 
-		// Add some walls :3
+		GameObject::Sptr platform2 = scene->CreateGameObject("platform2");
 		{
-			MeshResource::Sptr wall = ResourceManager::CreateAsset<MeshResource>();
-			wall->AddParam(MeshBuilderParam::CreateCube(ZERO, ONE));
-			wall->GenerateMesh();
+			platform2->SetPostion(glm::vec3(6.43f, 0.0f, 0.0f));
+			platform2->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+			platform2->SetScale(glm::vec3(3.36f, 1.81f, 1.0f));
 
-			GameObject::Sptr wall1 = scene->CreateGameObject("Wall1");
-			wall1->Add<RenderComponent>()->SetMesh(wall)->SetMaterial(whiteBrick);
-			wall1->SetScale(glm::vec3(20.0f, 1.0f, 3.0f));
-			wall1->SetPostion(glm::vec3(0.0f, 10.0f, 1.5f));
-			plane->AddChild(wall1);
+			Gameplay::Physics::RigidBody::Sptr physics = platform2->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Static);
+			Gameplay::Physics::BoxCollider::Sptr boxCollider = Gameplay::Physics::BoxCollider::Create();
+			boxCollider->SetScale(glm::vec3(3.36f, 1.81f, 1.0f));
+			physics->AddCollider(boxCollider);
 
-			GameObject::Sptr wall2 = scene->CreateGameObject("Wall2");
-			wall2->Add<RenderComponent>()->SetMesh(wall)->SetMaterial(whiteBrick);
-			wall2->SetScale(glm::vec3(20.0f, 1.0f, 3.0f));
-			wall2->SetPostion(glm::vec3(0.0f, -10.0f, 1.5f));
-			plane->AddChild(wall2);
-
-			GameObject::Sptr wall3 = scene->CreateGameObject("Wall3");
-			wall3->Add<RenderComponent>()->SetMesh(wall)->SetMaterial(whiteBrick);
-			wall3->SetScale(glm::vec3(1.0f, 20.0f, 3.0f));
-			wall3->SetPostion(glm::vec3(10.0f, 0.0f, 1.5f));
-			plane->AddChild(wall3);
-
-			GameObject::Sptr wall4 = scene->CreateGameObject("Wall4");
-			wall4->Add<RenderComponent>()->SetMesh(wall)->SetMaterial(whiteBrick);
-			wall4->SetScale(glm::vec3(1.0f, 20.0f, 3.0f));
-			wall4->SetPostion(glm::vec3(-10.0f, 0.0f, 1.5f));
-			plane->AddChild(wall4);
+			RenderComponent::Sptr renderer = platform2->Add<RenderComponent>();
+			renderer->SetMesh(sqrMesh);
+			renderer->SetMaterial(platformMat);
 		}
 
-		GameObject::Sptr monkey1 = scene->CreateGameObject("Monkey 1");
+		GameObject::Sptr platform3 = scene->CreateGameObject("float platform");
 		{
-			// Set position in the scene
-			monkey1->SetPostion(glm::vec3(1.5f, 0.0f, 1.0f));
+			platform3->SetPostion(glm::vec3(0.18f, 0.0f, 3.16f));
+			platform3->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+			platform3->SetScale(glm::vec3(0.87f, 0.37f, 1.0f));
 
-			// Add some behaviour that relies on the physics body
-			monkey1->Add<JumpBehaviour>();
+			Gameplay::Physics::RigidBody::Sptr physics = platform3->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Static);
+			Gameplay::Physics::BoxCollider::Sptr boxCollider = Gameplay::Physics::BoxCollider::Create();
+			boxCollider->SetScale(glm::vec3(0.87f, 0.37f, 1.0f));
+			physics->AddCollider(boxCollider);
 
-			// Create and attach a renderer for the monkey
-			RenderComponent::Sptr renderer = monkey1->Add<RenderComponent>();
-			renderer->SetMesh(monkeyMesh);
-			renderer->SetMaterial(monkeyMaterial);
 
-			// Example of a trigger that interacts with static and kinematic bodies as well as dynamic bodies
-			TriggerVolume::Sptr trigger = monkey1->Add<TriggerVolume>();
-			trigger->SetFlags(TriggerTypeFlags::Statics | TriggerTypeFlags::Kinematics);
-			trigger->AddCollider(BoxCollider::Create(glm::vec3(1.0f)));
-
-			monkey1->Add<TriggerVolumeEnterBehaviour>();
+			RenderComponent::Sptr renderer = platform3->Add<RenderComponent>();
+			renderer->SetMesh(sqrMesh);
+			renderer->SetMaterial(platformMat);
 		}
 
-		GameObject::Sptr ship = scene->CreateGameObject("Fenrir");
+		GameObject::Sptr lava = scene->CreateGameObject("lava");
 		{
-			// Set position in the scene
-			ship->SetPostion(glm::vec3(1.5f, 0.0f, 4.0f));
-			ship->SetScale(glm::vec3(0.1f));
+			lava->SetPostion(glm::vec3(0.0f, 0.0f, 0.0f));
+			lava->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+			lava->SetScale(glm::vec3(3.49f, 1.34f, 0.92f));
 
-			// Create and attach a renderer for the monkey
-			RenderComponent::Sptr renderer = ship->Add<RenderComponent>();
-			renderer->SetMesh(shipMesh);
-			renderer->SetMaterial(grey);
-
-			GameObject::Sptr particles = scene->CreateGameObject("Particles");
-			ship->AddChild(particles);
-			particles->SetPostion({ 0.0f, -7.0f, 0.0f});
-
-			ParticleSystem::Sptr particleManager = particles->Add<ParticleSystem>();
-			particleManager->Atlas = particleTex;
-
-			particleManager->_gravity = glm::vec3(0.0f);
-
-			ParticleSystem::ParticleData emitter;
-			emitter.Type = ParticleType::SphereEmitter;
-			emitter.TexID = 2;
-			emitter.Position = glm::vec3(0.0f);
-			emitter.Color = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-			emitter.Lifetime = 1.0f / 50.0f;
-			emitter.SphereEmitterData.Timer = 1.0f / 50.0f;
-			emitter.SphereEmitterData.Velocity = 0.5f;
-			emitter.SphereEmitterData.LifeRange = { 1.0f, 3.0f };
-			emitter.SphereEmitterData.Radius = 0.5f;
-			emitter.SphereEmitterData.SizeRange = { 0.5f, 1.0f };
-
-			ParticleSystem::ParticleData emitter2;
-			emitter2.Type = ParticleType::SphereEmitter;
-			emitter2.TexID = 2;
-			emitter2.Position = glm::vec3(0.0f);
-			emitter2.Color = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
-			emitter2.Lifetime = 1.0f / 40.0f;
-			emitter2.SphereEmitterData.Timer = 1.0f / 40.0f;
-			emitter2.SphereEmitterData.Velocity = 0.1f;
-			emitter2.SphereEmitterData.LifeRange = { 0.5f, 1.0f };
-			emitter2.SphereEmitterData.Radius = 0.25f;
-			emitter2.SphereEmitterData.SizeRange = { 0.25f, 0.5f };
-
-			particleManager->AddEmitter(emitter);
-			particleManager->AddEmitter(emitter2);
-
-			ShipMoveBehaviour::Sptr move = ship->Add<ShipMoveBehaviour>();
-			move->Center = glm::vec3(0.0f, 0.0f, 4.0f);
-			move->Speed = 180.0f;
-			move->Radius = 6.0f;
+			RenderComponent::Sptr renderer = lava->Add<RenderComponent>();
+			renderer->SetMesh(sqrMesh);
+			renderer->SetMaterial(lavaMat);
 		}
 
-		GameObject::Sptr demoBase = scene->CreateGameObject("Demo Parent");
+		//GameObject::Sptr ship = scene->CreateGameObject("Fenrir");
+		//{
+		//	// Set position in the scene
+		//	ship->SetPostion(glm::vec3(1.5f, 0.0f, 4.0f));
+		//	ship->SetScale(glm::vec3(0.1f));
 
-		GameObject::Sptr polkaBox = scene->CreateGameObject("Polka Box");
-		{
-			MeshResource::Sptr boxMesh = ResourceManager::CreateAsset<MeshResource>();
-			boxMesh->AddParam(MeshBuilderParam::CreateCube(ZERO, ONE));
-			boxMesh->GenerateMesh();
+		//	// Create and attach a renderer for the monkey
+		//	RenderComponent::Sptr renderer = ship->Add<RenderComponent>();
+		//	renderer->SetMesh(shipMesh);
+		//	renderer->SetMaterial(grey);
 
-			// Set and rotation position in the scene
-			polkaBox->SetPostion(glm::vec3(0, 0.0f, 3.0f));
+		//	GameObject::Sptr particles = scene->CreateGameObject("Particles");
+		//	ship->AddChild(particles);
+		//	particles->SetPostion({ 0.0f, -7.0f, 0.0f});
 
-			// Add a render component
-			RenderComponent::Sptr renderer = polkaBox->Add<RenderComponent>();
-			renderer->SetMesh(boxMesh);
-			renderer->SetMaterial(polka);
+		//	ParticleSystem::Sptr particleManager = particles->Add<ParticleSystem>();
+		//	particleManager->Atlas = particleTex;
 
-			demoBase->AddChild(polkaBox);
-		}
+		//	particleManager->_gravity = glm::vec3(0.0f);
 
-		// Box to showcase the specular material
-		GameObject::Sptr specBox = scene->CreateGameObject("Specular Object");
-		{
-			MeshResource::Sptr boxMesh = ResourceManager::CreateAsset<MeshResource>();
-			boxMesh->AddParam(MeshBuilderParam::CreateCube(ZERO, ONE));
-			boxMesh->GenerateMesh();
+		//	ParticleSystem::ParticleData emitter;
+		//	emitter.Type = ParticleType::SphereEmitter;
+		//	emitter.TexID = 2;
+		//	emitter.Position = glm::vec3(0.0f);
+		//	emitter.Color = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+		//	emitter.Lifetime = 1.0f / 50.0f;
+		//	emitter.SphereEmitterData.Timer = 1.0f / 50.0f;
+		//	emitter.SphereEmitterData.Velocity = 0.5f;
+		//	emitter.SphereEmitterData.LifeRange = { 1.0f, 3.0f };
+		//	emitter.SphereEmitterData.Radius = 0.5f;
+		//	emitter.SphereEmitterData.SizeRange = { 0.5f, 1.0f };
 
-			// Set and rotation position in the scene
-			specBox->SetPostion(glm::vec3(0, -4.0f, 1.0f));
+		//	ParticleSystem::ParticleData emitter2;
+		//	emitter2.Type = ParticleType::SphereEmitter;
+		//	emitter2.TexID = 2;
+		//	emitter2.Position = glm::vec3(0.0f);
+		//	emitter2.Color = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
+		//	emitter2.Lifetime = 1.0f / 40.0f;
+		//	emitter2.SphereEmitterData.Timer = 1.0f / 40.0f;
+		//	emitter2.SphereEmitterData.Velocity = 0.1f;
+		//	emitter2.SphereEmitterData.LifeRange = { 0.5f, 1.0f };
+		//	emitter2.SphereEmitterData.Radius = 0.25f;
+		//	emitter2.SphereEmitterData.SizeRange = { 0.25f, 0.5f };
 
-			// Add a render component
-			RenderComponent::Sptr renderer = specBox->Add<RenderComponent>();
-			renderer->SetMesh(boxMesh);
-			renderer->SetMaterial(testMaterial); 
+		//	particleManager->AddEmitter(emitter);
+		//	particleManager->AddEmitter(emitter2);
 
-			demoBase->AddChild(specBox);
-		}
-
-		
-
-		// sphere to showcase the foliage material
-		GameObject::Sptr foliageBall = scene->CreateGameObject("Foliage Sphere");
-		{
-			// Set and rotation position in the scene
-			foliageBall->SetPostion(glm::vec3(-4.0f, -4.0f, 1.0f));
-
-			// Add a render component
-			RenderComponent::Sptr renderer = foliageBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(foliageMaterial);
-
-			demoBase->AddChild(foliageBall);
-		}
-
-		// Box to showcase the foliage material
-		GameObject::Sptr foliageBox = scene->CreateGameObject("Foliage Box");
-		{
-			MeshResource::Sptr box = ResourceManager::CreateAsset<MeshResource>();
-			box->AddParam(MeshBuilderParam::CreateCube(glm::vec3(0, 0, 0.5f), ONE));
-			box->GenerateMesh();
-
-			// Set and rotation position in the scene
-			foliageBox->SetPostion(glm::vec3(-6.0f, -4.0f, 1.0f));
-
-			// Add a render component
-			RenderComponent::Sptr renderer = foliageBox->Add<RenderComponent>();
-			renderer->SetMesh(box);
-			renderer->SetMaterial(foliageMaterial);
-
-			demoBase->AddChild(foliageBox);
-		}
-
-		// Box to showcase the specular material
-		GameObject::Sptr toonBall = scene->CreateGameObject("Toon Object");
-		{
-			// Set and rotation position in the scene
-			toonBall->SetPostion(glm::vec3(-2.0f, -4.0f, 1.0f));
-
-			// Add a render component
-			RenderComponent::Sptr renderer = toonBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(toonMaterial);
-
-			demoBase->AddChild(toonBall);
-		}
-
-		GameObject::Sptr displacementBall = scene->CreateGameObject("Displacement Object");
-		{
-			// Set and rotation position in the scene
-			displacementBall->SetPostion(glm::vec3(2.0f, -4.0f, 1.0f));
-
-			// Add a render component
-			RenderComponent::Sptr renderer = displacementBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(displacementTest);
-
-			demoBase->AddChild(displacementBall);
-		}
-
-		GameObject::Sptr multiTextureBall = scene->CreateGameObject("Multitextured Object");
-		{
-			// Set and rotation position in the scene 
-			multiTextureBall->SetPostion(glm::vec3(4.0f, -4.0f, 1.0f));
-
-			// Add a render component 
-			RenderComponent::Sptr renderer = multiTextureBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(multiTextureMat);
-
-			demoBase->AddChild(multiTextureBall);
-		}
-
-		GameObject::Sptr normalMapBall = scene->CreateGameObject("Normal Mapped Object");
-		{
-			// Set and rotation position in the scene 
-			normalMapBall->SetPostion(glm::vec3(6.0f, -4.0f, 1.0f));
-
-			// Add a render component 
-			RenderComponent::Sptr renderer = normalMapBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(normalmapMat);
-
-			demoBase->AddChild(normalMapBall);
-		}
-
-		// Create a trigger volume for testing how we can detect collisions with objects!
-		GameObject::Sptr trigger = scene->CreateGameObject("Trigger");
-		{
-			TriggerVolume::Sptr volume = trigger->Add<TriggerVolume>();
-			CylinderCollider::Sptr collider = CylinderCollider::Create(glm::vec3(3.0f, 3.0f, 1.0f));
-			collider->SetPosition(glm::vec3(0.0f, 0.0f, 0.5f));
-			volume->AddCollider(collider);
-
-			trigger->Add<TriggerVolumeEnterBehaviour>();
-		}
+		//	ShipMoveBehaviour::Sptr move = ship->Add<ShipMoveBehaviour>();
+		//	move->Center = glm::vec3(0.0f, 0.0f, 4.0f);
+		//	move->Speed = 180.0f;
+		//	move->Radius = 6.0f;
+		//}
 
 		GameObject::Sptr shadowCaster = scene->CreateGameObject("Shadow Light");
 		{
@@ -663,8 +560,6 @@ void DefaultSceneLayer::_CreateScene()
 				GuiText::Sptr text = subPanel->Add<GuiText>();
 				text->SetText("Hello world!");
 				text->SetFont(font);
-
-				monkey1->Get<JumpBehaviour>()->Panel = text;
 			}
 
 			canvas->AddChild(subPanel);
@@ -673,10 +568,11 @@ void DefaultSceneLayer::_CreateScene()
 
 		GameObject::Sptr particles = scene->CreateGameObject("Particles"); 
 		{
-			particles->SetPostion({ -2.0f, 0.0f, 2.0f });
+			particles->SetPostion({ 0.3f, 0.0f, 1.26f });
 
 			ParticleSystem::Sptr particleManager = particles->Add<ParticleSystem>();  
 			particleManager->Atlas = particleTex;
+			particleManager->_gravity = glm::vec3(0.0f, 0.0f, 1.0f);
 
 			ParticleSystem::ParticleData emitter;
 			emitter.Type = ParticleType::SphereEmitter;
@@ -684,11 +580,11 @@ void DefaultSceneLayer::_CreateScene()
 			emitter.Position = glm::vec3(0.0f);
 			emitter.Color = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 			emitter.Lifetime = 0.0f;
-			emitter.SphereEmitterData.Timer = 1.0f / 50.0f;
+			emitter.SphereEmitterData.Timer = 1.0f / 10.0f;
 			emitter.SphereEmitterData.Velocity = 0.5f;
-			emitter.SphereEmitterData.LifeRange = { 1.0f, 4.0f };
-			emitter.SphereEmitterData.Radius = 1.0f;
-			emitter.SphereEmitterData.SizeRange = { 0.5f, 1.5f };
+			emitter.SphereEmitterData.LifeRange = { 0.5f, 2.0f };
+			emitter.SphereEmitterData.Radius = 2.0f;
+			emitter.SphereEmitterData.SizeRange = { 0.25f, 1.0f };
 
 			particleManager->AddEmitter(emitter);
 		}
