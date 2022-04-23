@@ -364,7 +364,7 @@ void DefaultSceneLayer::_CreateScene()
 			Light::Sptr lightComponent = light->Add<Light>();
 			lightComponent->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
 			lightComponent->SetRadius(5.0f);
-			lightComponent->SetIntensity(10.0f);
+			lightComponent->SetIntensity(1.0f);
 
 			GameObject::Sptr light2 = scene->CreateGameObject("Light2");
 			light2->SetPostion(glm::vec3(0.14f, -3.32f, 3.26f));
@@ -373,7 +373,7 @@ void DefaultSceneLayer::_CreateScene()
 			Light::Sptr lightComponent2 = light2->Add<Light>();
 			lightComponent2->SetColor(glm::vec3(0.902f, 0.02f,0.02f));
 			lightComponent2->SetRadius(10.0f);
-			lightComponent2->SetIntensity(5.0f);
+			lightComponent2->SetIntensity(1.0f);
 
 			GameObject::Sptr light3 = scene->CreateGameObject("Light3");
 			light3->SetPostion(glm::vec3(5.93, -1.86f, 4.76f));
@@ -382,7 +382,7 @@ void DefaultSceneLayer::_CreateScene()
 			Light::Sptr lightComponent3 = light3->Add<Light>();
 			lightComponent3->SetColor(glm::vec3(1.0f,1.0f,1.0f));
 			lightComponent3->SetRadius(5.0f);
-			lightComponent3->SetIntensity(10.0f);
+			lightComponent3->SetIntensity(1.0f);
 		}
 
 		// We'll create a mesh that is a simple plane that we can resize later
@@ -524,8 +524,8 @@ void DefaultSceneLayer::_CreateScene()
 		GameObject::Sptr shadowCaster = scene->CreateGameObject("Shadow Light");
 		{
 			// Set position in the scene
-			shadowCaster->SetPostion(glm::vec3(3.0f, 3.0f, 5.0f));
-			shadowCaster->LookAt(glm::vec3(0.0f));
+			shadowCaster->SetPostion(glm::vec3(13.48f, -2.56f, 7.42f));
+			shadowCaster->SetRotation(glm::vec3(44.f, 72.f, -19.f));
 
 			// Create and attach a renderer for the monkey
 			ShadowCamera::Sptr shadowCam = shadowCaster->Add<ShadowCamera>();
