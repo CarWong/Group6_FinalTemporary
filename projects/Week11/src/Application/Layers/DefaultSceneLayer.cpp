@@ -451,6 +451,7 @@ void DefaultSceneLayer::_CreateScene()
 		}
 
 
+
 		// Set up all our sample objects
 		GameObject::Sptr platform1 = scene->CreateGameObject("platform1");
 		{
@@ -546,7 +547,7 @@ void DefaultSceneLayer::_CreateScene()
 			ParticleSystem::Sptr particleManager = particlesBall->Add<ParticleSystem>();
 			particleManager->Atlas = particleTex;
 
-			particleManager->_gravity = glm::vec3(0.0f);
+			particleManager->_gravity = glm::vec3(9.0f, 0.0f, 8.0f);
 
 			ParticleSystem::ParticleData emitter;
 			emitter.Type = ParticleType::SphereEmitter;
@@ -597,6 +598,7 @@ void DefaultSceneLayer::_CreateScene()
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(loseMat);
 		}
+		
 
 		//GameObject::Sptr ship = scene->CreateGameObject("Fenrir");
 		//{
@@ -685,6 +687,12 @@ void DefaultSceneLayer::_CreateScene()
 			emitter.SphereEmitterData.SizeRange = { 1.f, 2.5f };
 
 			particleManager->AddEmitter(emitter);
+		}
+
+		if (mainChar->GetPosition().z < 0.f)
+		{
+			loseScene->SetPostion(glm::vec3(0.0f, -2.73f, 4.f));
+			std::cout << "lose";
 		}
 
 		GuiBatcher::SetDefaultTexture(ResourceManager::CreateAsset<Texture2D>("textures/ui-sprite.png"));
