@@ -167,6 +167,7 @@ void DefaultSceneLayer::_CreateScene()
 		Texture2D::Sptr backgroundTex = ResourceManager::CreateAsset<Texture2D>("textures/backgroundexam.png");
 		Texture2D::Sptr winTex = ResourceManager::CreateAsset<Texture2D>("textures/winscreen.png");
 		Texture2D::Sptr loseTex = ResourceManager::CreateAsset<Texture2D>("textures/losescreen.png");
+		Texture2D::Sptr ballTex = ResourceManager::CreateAsset<Texture2D>("textures/ball.jpg");
 		
 
 		//DebugWindow::Sptr debugWindow = app.GetLayer<ImGuiDebugLayer>()->GetWindow<DebugWindow>();
@@ -216,7 +217,7 @@ void DefaultSceneLayer::_CreateScene()
 		scene->SetSkyboxRotation(glm::rotate(MAT4_IDENTITY, glm::half_pi<float>(), glm::vec3(1.0f, 0.0f, 0.0f)));
 
 		// Loading in a color lookup table
-		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/cool.CUBE");   
+		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/Group6.CUBE");   
 
 		// Configure the color correction LUT
 		scene->SetColorLUT(lut);
@@ -477,6 +478,13 @@ void DefaultSceneLayer::_CreateScene()
 			box->SetScale(glm::vec3(0.6f, 0.99f, 0.32f));
 			physics->AddCollider(box);
 
+			Gameplay::Physics::TriggerVolume::Sptr volume = mainChar->Add<Gameplay::Physics::TriggerVolume>();
+			Gameplay::Physics::BoxCollider::Sptr box2 = Gameplay::Physics::BoxCollider::Create();
+
+			box2->SetPosition(glm::vec3(0.0f, 0.95f, 0.0f));
+			box2->SetScale(glm::vec3(0.6f, 0.99f, 0.32f));
+			volume->AddCollider(box2);
+
 			Gameplay::GameObject::Sptr particlesMC = scene->CreateGameObject("Particles");
 			mainChar->AddChild(particlesMC);
 
@@ -501,6 +509,17 @@ void DefaultSceneLayer::_CreateScene()
 			particleManager->AddEmitter(emitter);
 		}
 
+		GameObject::Sptr ball = scene->CreateGameObject("ball");
+		{
+			ball->SetPostion(glm::vec3(0.0f, 0.0f, 0.0f));
+			ball->SetRotation(glm::vec3(90.f, 0.f, 0.f));
+			ball->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+			
+			RenderComponent::Sptr renderer = ball->Add<RenderComponent>();
+			renderer->SetMesh(sqrMesh);
+
+		}
+
 		GameObject::Sptr backgroundScene = scene->CreateGameObject("background");
 		{
 			backgroundScene->SetPostion(glm::vec3(0.33f, 3.54f, 0.0f));
@@ -510,6 +529,28 @@ void DefaultSceneLayer::_CreateScene()
 			RenderComponent::Sptr renderer = backgroundScene->Add<RenderComponent>();
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(backgroundMat);
+		}
+
+		GameObject::Sptr winScene = scene->CreateGameObject("win");
+		{
+			winScene->SetPostion(glm::vec3(0.0f, -2.73f, -4.f));
+			winScene->SetRotation(glm::vec3(-180.f, 0.0f, 0.0f));
+			winScene->SetScale(glm::vec3(4.49f, 1.0f, 3.44f));
+
+			RenderComponent::Sptr renderer = winScene->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(winMat);
+		}
+
+		GameObject::Sptr loseScene = scene->CreateGameObject("lose");
+		{
+			loseScene->SetPostion(glm::vec3(0.0f, -2.73f, -4.f));
+			loseScene->SetRotation(glm::vec3(-180.f, 0.0f, 0.0f));
+			loseScene->SetScale(glm::vec3(4.49f, 1.0f, 3.44f));
+
+			RenderComponent::Sptr renderer = loseScene->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(loseMat);
 		}
 
 		//GameObject::Sptr ship = scene->CreateGameObject("Fenrir");
@@ -590,7 +631,7 @@ void DefaultSceneLayer::_CreateScene()
 			emitter.Type = ParticleType::SphereEmitter;
 			emitter.TexID = 0;
 			emitter.Position = glm::vec3(0.0f);
-			emitter.Color = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+			emitter.Color = glm::vec4(1.f, 0.0f, 0.0f, 1.0f);
 			emitter.Lifetime = 0.0f;
 			emitter.SphereEmitterData.Timer = 1.0f / 10.0f;
 			emitter.SphereEmitterData.Velocity = 0.5f;
