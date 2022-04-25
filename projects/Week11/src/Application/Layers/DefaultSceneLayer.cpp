@@ -471,6 +471,8 @@ void DefaultSceneLayer::_CreateScene()
 			Gameplay::Physics::RigidBody::Sptr physics = mainChar->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Dynamic);
 			Gameplay::Physics::BoxCollider::Sptr box = Gameplay::Physics::BoxCollider::Create();
 
+			JumpBehaviour::Sptr mainCharJump = mainChar->Add<JumpBehaviour>();
+
 			box->SetPosition(glm::vec3(0.0f, 0.95f, 0.0f));
 			box->SetScale(glm::vec3(0.6f, 0.99f, 0.32f));
 			physics->AddCollider(box);

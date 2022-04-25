@@ -25,7 +25,7 @@ nlohmann::json JumpBehaviour::ToJson() const {
 
 JumpBehaviour::JumpBehaviour() :
 	IComponent(),
-	_impulse(10.0f)
+	_impulse(5.0f)
 { }
 
 JumpBehaviour::~JumpBehaviour() = default;
