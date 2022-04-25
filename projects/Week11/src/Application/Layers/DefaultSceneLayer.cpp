@@ -393,6 +393,14 @@ void DefaultSceneLayer::_CreateScene()
 			loseMat->Set("u_Material.NormalMap", normalMapDefault);
 		}
 
+		Material::Sptr ballMat = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			ballMat->Name = "ball";
+			ballMat->Set("u_Material.AlbedoMap", ballTex);
+			ballMat->Set("u_Material.Shininess", 0.1f);
+			ballMat->Set("u_Material.NormalMap", normalMapDefault);
+		}
+
 		// Create some lights for our scene
 		GameObject::Sptr lightParent = scene->CreateGameObject("Lights");
 
@@ -518,6 +526,14 @@ void DefaultSceneLayer::_CreateScene()
 			
 			RenderComponent::Sptr renderer = ball->Add<RenderComponent>();
 			renderer->SetMesh(sqrMesh);
+			renderer->SetMaterial(ballMat);
+
+			Gameplay::Physics::TriggerVolume::Sptr volume = ball->Add<Gameplay::Physics::TriggerVolume>();
+			Gameplay::Physics::BoxCollider::Sptr box = Gameplay::Physics::BoxCollider::Create();
+			
+			box->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+			box->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+			volume->AddCollider(box);
 
 		}
 
