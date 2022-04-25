@@ -6,7 +6,7 @@
 FilmGrain::FilmGrain() :
 	PostProcessingLayer::Effect(),
 	_shader(nullptr),
-	_amount(0.01)
+	_amount(0.001)
 {
 	Name = "Film Grain";
 	_format = RenderTargetType::ColorRgb8;
@@ -27,7 +27,7 @@ void FilmGrain::Apply(const Framebuffer::Sptr & gBuffer)
 
 void FilmGrain::RenderImGui()
 {
-	LABEL_LEFT(ImGui::SliderFloat, "Amount", &_amount, 0.05f, 1.0f);
+	LABEL_LEFT(ImGui::SliderFloat, "Amount", &_amount, 0.001f, 1.0f);
 }
 
 FilmGrain::Sptr FilmGrain::FromJson(const nlohmann::json & data)

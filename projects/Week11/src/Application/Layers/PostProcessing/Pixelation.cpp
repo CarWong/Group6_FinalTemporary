@@ -6,7 +6,7 @@
 Pixelation::Pixelation() :
 	PostProcessingLayer::Effect(),
 	_shader(nullptr),
-	_pixels(2048.0)
+	_pixels(4096.0)
 {
 	Name = "Pixelation";
 	_format = RenderTargetType::ColorRgb8;
@@ -27,7 +27,7 @@ void Pixelation::Apply(const Framebuffer::Sptr & gBuffer)
 
 void Pixelation::RenderImGui()
 {
-	LABEL_LEFT(ImGui::SliderFloat, "Pixelation", &_pixels, 256.0f, 2048.0f);
+	LABEL_LEFT(ImGui::SliderFloat, "Pixelation", &_pixels, 256.0f, 4096.0f);
 }
 
 Pixelation::Sptr Pixelation::FromJson(const nlohmann::json & data)
