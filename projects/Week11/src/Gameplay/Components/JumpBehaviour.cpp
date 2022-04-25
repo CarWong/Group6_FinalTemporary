@@ -37,9 +37,31 @@ JumpBehaviour::Sptr JumpBehaviour::FromJson(const nlohmann::json& blob) {
 }
 
 void JumpBehaviour::Update(float deltaTime) {
-	if (InputEngine::GetKeyState(GLFW_KEY_SPACE) == ButtonState::Pressed) {
+	if (InputEngine::GetKeyState(GLFW_KEY_SPACE) == ButtonState::Pressed) 
+	{
 		_body->ApplyImpulse(glm::vec3(0.0f, 0.0f, _impulse));
 		Gameplay::IComponent::Sptr ptr = Panel.lock();
+
+		if (ptr != nullptr) {
+			ptr->IsEnabled = !ptr->IsEnabled;
+		}
+	}
+
+	//player movement
+	if (InputEngine::GetKeyState(GLFW_KEY_A) == ButtonState::Pressed)
+	{
+		_body->ApplyImpulse(glm::vec3(-_impulse, 0.0f, 0.0f));
+		Gameplay::IComponent::Sptr ptr = Panel.lock();
+
+		if (ptr != nullptr) {
+			ptr->IsEnabled = !ptr->IsEnabled;
+		}
+	}
+	if (InputEngine::GetKeyState(GLFW_KEY_D) == ButtonState::Pressed)
+	{
+		_body->ApplyImpulse(glm::vec3(_impulse, 0.0f, 0.0f));
+		Gameplay::IComponent::Sptr ptr = Panel.lock();
+
 		if (ptr != nullptr) {
 			ptr->IsEnabled = !ptr->IsEnabled;
 		}
