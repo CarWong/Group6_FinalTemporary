@@ -423,10 +423,6 @@ void DefaultSceneLayer::_CreateScene()
 			lightComponent3->SetIntensity(1.0f);
 		}
 
-		// We'll create a mesh that is a simple plane that we can resize later
-		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
-		planeMesh->AddParam(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(1.0f)));
-		planeMesh->GenerateMesh();
 
 		MeshResource::Sptr sphere = ResourceManager::CreateAsset<MeshResource>();
 		sphere->AddParam(MeshBuilderParam::CreateIcoSphere(ZERO, ONE, 5));
