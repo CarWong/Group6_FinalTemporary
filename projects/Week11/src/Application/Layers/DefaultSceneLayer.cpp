@@ -444,62 +444,18 @@ void DefaultSceneLayer::_CreateScene()
 		// Set up all our sample objects
 		GameObject::Sptr platform1 = scene->CreateGameObject("platform1");
 		{
-			platform1->SetPostion(glm::vec3(-5.35f, 0.0f, 0.0f));
+			platform1->SetPostion(glm::vec3(0.f, 0.0f, 0.0f));
 			platform1->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
-			platform1->SetScale(glm::vec3(3.0f, 1.92f, 1.0f));
+			platform1->SetScale(glm::vec3(10.84f, 1.92f, 1.0f));
 
 			Gameplay::Physics::RigidBody::Sptr physics = platform1->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Static);
 			Gameplay::Physics::BoxCollider::Sptr boxCollider = Gameplay::Physics::BoxCollider::Create();
-			boxCollider->SetScale(glm::vec3(3.0f, 1.92f, 1.0f));
+			boxCollider->SetScale(glm::vec3(10.84f, 1.92f, 1.0f));
 			physics->AddCollider(boxCollider);
 
 			RenderComponent::Sptr renderer = platform1->Add<RenderComponent>();
 			renderer->SetMesh(sqrMesh);
 			renderer->SetMaterial(platformMat);
-		}
-
-		GameObject::Sptr platform2 = scene->CreateGameObject("platform2");
-		{
-			platform2->SetPostion(glm::vec3(6.43f, 0.0f, 0.0f));
-			platform2->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
-			platform2->SetScale(glm::vec3(3.36f, 1.81f, 1.0f));
-
-			Gameplay::Physics::RigidBody::Sptr physics = platform2->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Static);
-			Gameplay::Physics::BoxCollider::Sptr boxCollider = Gameplay::Physics::BoxCollider::Create();
-			boxCollider->SetScale(glm::vec3(3.36f, 1.81f, 1.0f));
-			physics->AddCollider(boxCollider);
-
-			RenderComponent::Sptr renderer = platform2->Add<RenderComponent>();
-			renderer->SetMesh(sqrMesh);
-			renderer->SetMaterial(platformMat);
-		}
-
-		GameObject::Sptr platform3 = scene->CreateGameObject("float platform");
-		{
-			platform3->SetPostion(glm::vec3(0.18f, 0.0f, 3.16f));
-			platform3->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
-			platform3->SetScale(glm::vec3(0.87f, 0.37f, 1.0f));
-
-			Gameplay::Physics::RigidBody::Sptr physics = platform3->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Static);
-			Gameplay::Physics::BoxCollider::Sptr boxCollider = Gameplay::Physics::BoxCollider::Create();
-			boxCollider->SetScale(glm::vec3(0.87f, 0.37f, 1.0f));
-			physics->AddCollider(boxCollider);
-
-
-			RenderComponent::Sptr renderer = platform3->Add<RenderComponent>();
-			renderer->SetMesh(sqrMesh);
-			renderer->SetMaterial(platformMat);
-		}
-
-		GameObject::Sptr lava = scene->CreateGameObject("lava");
-		{
-			lava->SetPostion(glm::vec3(0.0f, 0.0f, 0.0f));
-			lava->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
-			lava->SetScale(glm::vec3(3.49f, 1.34f, 0.92f));
-
-			RenderComponent::Sptr renderer = lava->Add<RenderComponent>();
-			renderer->SetMesh(sqrMesh);
-			renderer->SetMaterial(lavaMat);
 		}
 
 		GameObject::Sptr mainChar = scene->CreateGameObject("main char");
@@ -541,6 +497,17 @@ void DefaultSceneLayer::_CreateScene()
 
 
 			particleManager->AddEmitter(emitter);
+		}
+
+		GameObject::Sptr backgroundScene = scene->CreateGameObject("background");
+		{
+			backgroundScene->SetPostion(glm::vec3(0.33f, 3.54f, 0.0f));
+			backgroundScene->SetRotation(glm::vec3(-180.0f, 0.0f, 0.0f));
+			backgroundScene->SetScale(glm::vec3(16.68f, 15.33f, 16.05f));
+			
+			RenderComponent::Sptr renderer = backgroundScene->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(backgroundMat);
 		}
 
 		//GameObject::Sptr ship = scene->CreateGameObject("Fenrir");
@@ -599,59 +566,27 @@ void DefaultSceneLayer::_CreateScene()
 		GameObject::Sptr shadowCaster = scene->CreateGameObject("Shadow Light");
 		{
 			// Set position in the scene
-			shadowCaster->SetPostion(glm::vec3(-25.4f, -5.f, 9.73f));
-			shadowCaster->SetRotation(glm::vec3(100.f, 23.f, -89.f));
+			shadowCaster->SetPostion(glm::vec3(-35.4f, -20.47f, 13.020f));
+			shadowCaster->SetRotation(glm::vec3(95.f, 55.f, -89.f));
 
 			// Create and attach a renderer for the monkey
 			ShadowCamera::Sptr shadowCam = shadowCaster->Add<ShadowCamera>();
 			shadowCam->SetProjection(glm::perspective(glm::radians(120.0f), 1.0f, 0.1f, 100.0f));
 		}
 
-		/////////////////////////// UI //////////////////////////////
-		
-		GameObject::Sptr canvas = scene->CreateGameObject("UI Canvas"); 
-		{
-			RectTransform::Sptr transform = canvas->Add<RectTransform>();
-			transform->SetMin({ 16, 16 });
-			transform->SetMax({ 128, 128 });
-
-			GuiPanel::Sptr canPanel = canvas->Add<GuiPanel>();
-
-
-			GameObject::Sptr subPanel = scene->CreateGameObject("Sub Item");
-			{
-				RectTransform::Sptr transform = subPanel->Add<RectTransform>();
-				transform->SetMin({ 10, 10 });
-				transform->SetMax({ 64, 64 });
-
-				GuiPanel::Sptr panel = subPanel->Add<GuiPanel>();
-				panel->SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
-				panel->SetTexture(ResourceManager::CreateAsset<Texture2D>("textures/upArrow.png"));
-
-				Font::Sptr font = ResourceManager::CreateAsset<Font>("fonts/Roboto-Medium.ttf", 16.0f);
-				font->Bake();
-
-				GuiText::Sptr text = subPanel->Add<GuiText>();
-				text->SetText("Hello world!");
-				text->SetFont(font);
-			}
-
-			canvas->AddChild(subPanel);
-		}
-		
+		/////////////////////////// UI //////////////////////////////		
 
 		GameObject::Sptr particles = scene->CreateGameObject("Particles"); 
 		{
-			particles->SetPostion({ 0.3f, 0.0f, 1.26f });
+			particles->SetPostion({ 2.75f, 3.31f, 4.85f });
 
 			ParticleSystem::Sptr particleManager = particles->Add<ParticleSystem>();  
 			particleManager->Atlas = particleTex;
-			particleManager->_gravity = glm::vec3(0.0f, 0.0f, 1.0f);
+			particleManager->_gravity = glm::vec3(-3.8f, 0.0f, -2.31f);
 
 			ParticleSystem::ParticleData emitter;
 			emitter.Type = ParticleType::SphereEmitter;
-			emitter.TexID = 2;
+			emitter.TexID = 0;
 			emitter.Position = glm::vec3(0.0f);
 			emitter.Color = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 			emitter.Lifetime = 0.0f;
@@ -659,7 +594,7 @@ void DefaultSceneLayer::_CreateScene()
 			emitter.SphereEmitterData.Velocity = 0.5f;
 			emitter.SphereEmitterData.LifeRange = { 0.5f, 2.0f };
 			emitter.SphereEmitterData.Radius = 2.0f;
-			emitter.SphereEmitterData.SizeRange = { 0.25f, 1.0f };
+			emitter.SphereEmitterData.SizeRange = { 1.f, 2.5f };
 
 			particleManager->AddEmitter(emitter);
 		}
