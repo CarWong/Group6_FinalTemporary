@@ -154,11 +154,11 @@ void DefaultSceneLayer::_CreateScene()
 		ResourceManager::CreateAsset<Texture2D>("textures/flashlight-2.png");
 		ResourceManager::CreateAsset<Texture2D>("textures/light_projection.png");
 
-		Texture2DArray::Sptr particleTex = ResourceManager::CreateAsset<Texture2DArray>("textures/particles.png", 2, 2);
+		Texture2DArray::Sptr particleTex = ResourceManager::CreateAsset<Texture2DArray>("textures/particlesRR.png", 2, 2);
 
 		//Final Textures & Meshes
 		MeshResource::Sptr sqrMesh = ResourceManager::CreateAsset<MeshResource>("platform2.obj");
-		MeshResource::Sptr mainChar = ResourceManager::CreateAsset<MeshResource>("trashy.obj");
+		MeshResource::Sptr mainCharMesh = ResourceManager::CreateAsset<MeshResource>("trashy.obj");
 		
 		Texture2D::Sptr platformTex = ResourceManager::CreateAsset<Texture2D>("textures/Platform.png");
 		Texture2D::Sptr lavaTex = ResourceManager::CreateAsset<Texture2D>("textures/beans.png");
@@ -476,6 +476,47 @@ void DefaultSceneLayer::_CreateScene()
 			RenderComponent::Sptr renderer = lava->Add<RenderComponent>();
 			renderer->SetMesh(sqrMesh);
 			renderer->SetMaterial(lavaMat);
+		}
+
+		GameObject::Sptr mainChar = scene->CreateGameObject("main char");
+		{
+			mainChar->SetPostion(glm::vec3(-5.43f, -0.23f, 2.5f));
+			mainChar->SetRotation(glm::vec3(90.0f, 0.0f, -90.0f));
+			mainChar->SetScale(glm::vec3(0.7f, 0.7f, 0.7f));
+
+			RenderComponent::Sptr renderer = mainChar->Add<RenderComponent>();
+			renderer->SetMesh(mainCharMesh);
+			renderer->SetMaterial(mainCharMat);
+
+			Gameplay::Physics::RigidBody::Sptr physics = mainChar->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Dynamic);
+			Gameplay::Physics::BoxCollider::Sptr box = Gameplay::Physics::BoxCollider::Create();
+
+			box->SetPosition(glm::vec3(0.0f, 0.95f, 0.0f));
+			box->SetScale(glm::vec3(0.6f, 0.99f, 0.32f));
+			physics->AddCollider(box);
+
+			Gameplay::GameObject::Sptr particlesMC = scene->CreateGameObject("Particles");
+			mainChar->AddChild(particlesMC);
+
+			ParticleSystem::Sptr particleManager = particlesMC->Add<ParticleSystem>();
+			particleManager->Atlas = particleTex;
+
+			particleManager->_gravity = glm::vec3(0.0f);
+
+			ParticleSystem::ParticleData emitter;
+			emitter.Type = ParticleType::SphereEmitter;
+			emitter.TexID = 2;
+			emitter.Position = glm::vec3(0.0f);
+			emitter.Color = glm::vec4(0.966f, 0.878f, 0.767f, 1.0f);
+			emitter.Lifetime = 1.0f / 50.0f;
+			emitter.SphereEmitterData.Timer = 1.0f / 10.0f;
+			emitter.SphereEmitterData.Velocity = 0.5f;
+			emitter.SphereEmitterData.LifeRange = { 1.0f, 1.5f };
+			emitter.SphereEmitterData.Radius = 0.5f;
+			emitter.SphereEmitterData.SizeRange = { 0.25f, 0.5f };
+
+
+			particleManager->AddEmitter(emitter);
 		}
 
 		//GameObject::Sptr ship = scene->CreateGameObject("Fenrir");
