@@ -528,6 +528,11 @@ void DefaultSceneLayer::_CreateScene()
 			renderer->SetMesh(sqrMesh);
 			renderer->SetMaterial(ballMat);
 
+			Gameplay::Physics::RigidBody::Sptr physics = ball->Add<Gameplay::Physics::RigidBody>(RigidBodyType::Dynamic);
+			Gameplay::Physics::BoxCollider::Sptr box2 = Gameplay::Physics::BoxCollider::Create();
+			box2->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
+			physics->AddCollider(box2);
+
 			Gameplay::Physics::TriggerVolume::Sptr volume = ball->Add<Gameplay::Physics::TriggerVolume>();
 			Gameplay::Physics::BoxCollider::Sptr box = Gameplay::Physics::BoxCollider::Create();
 			
