@@ -535,6 +535,29 @@ void DefaultSceneLayer::_CreateScene()
 			box->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 			volume->AddCollider(box);
 
+			Gameplay::GameObject::Sptr particlesBall = scene->CreateGameObject("Particles");
+			mainChar->AddChild(particlesBall);
+
+			ParticleSystem::Sptr particleManager = particlesBall->Add<ParticleSystem>();
+			particleManager->Atlas = particleTex;
+
+			particleManager->_gravity = glm::vec3(0.0f);
+
+			ParticleSystem::ParticleData emitter;
+			emitter.Type = ParticleType::SphereEmitter;
+			emitter.TexID = 2;
+			emitter.Position = glm::vec3(0.0f);
+			emitter.Color = glm::vec4(0.966f, 0.878f, 0.767f, 1.0f);
+			emitter.Lifetime = 1.0f / 50.0f;
+			emitter.SphereEmitterData.Timer = 1.0f / 10.0f;
+			emitter.SphereEmitterData.Velocity = 0.5f;
+			emitter.SphereEmitterData.LifeRange = { 1.0f, 1.5f };
+			emitter.SphereEmitterData.Radius = 0.5f;
+			emitter.SphereEmitterData.SizeRange = { 0.25f, 0.5f };
+
+
+			particleManager->AddEmitter(emitter);
+
 		}
 
 		GameObject::Sptr backgroundScene = scene->CreateGameObject("background");
