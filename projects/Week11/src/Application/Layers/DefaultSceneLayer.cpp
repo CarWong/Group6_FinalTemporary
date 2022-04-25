@@ -159,10 +159,14 @@ void DefaultSceneLayer::_CreateScene()
 		//Final Textures & Meshes
 		MeshResource::Sptr sqrMesh = ResourceManager::CreateAsset<MeshResource>("platform2.obj");
 		MeshResource::Sptr mainCharMesh = ResourceManager::CreateAsset<MeshResource>("trashy.obj");
+		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>("plane.obj");
 		
 		Texture2D::Sptr platformTex = ResourceManager::CreateAsset<Texture2D>("textures/Platform.png");
 		Texture2D::Sptr lavaTex = ResourceManager::CreateAsset<Texture2D>("textures/beans.png");
 		Texture2D::Sptr mainCharTex = ResourceManager::CreateAsset<Texture2D>("textures/trashyTEX.png");
+		Texture2D::Sptr backgroundTex = ResourceManager::CreateAsset<Texture2D>("textures/backgroundexam.png");
+		Texture2D::Sptr winTex = ResourceManager::CreateAsset<Texture2D>("textures/winscreen.png");
+		Texture2D::Sptr loseTex = ResourceManager::CreateAsset<Texture2D>("textures/losescreen.png");
 		
 
 		//DebugWindow::Sptr debugWindow = app.GetLayer<ImGuiDebugLayer>()->GetWindow<DebugWindow>();
@@ -361,6 +365,30 @@ void DefaultSceneLayer::_CreateScene()
 			mainCharMat->Set("u_Material.AlbedoMap", mainCharTex);
 			mainCharMat->Set("u_Material.Shininess", 0.1f);
 			mainCharMat->Set("u_Material.NormalMap", normalMapDefault);
+		}
+
+		Material::Sptr backgroundMat = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			backgroundMat->Name = "background";
+			backgroundMat->Set("u_Material.AlbedoMap", backgroundTex);
+			backgroundMat->Set("u_Material.Shininess", 0.1f);
+			backgroundMat->Set("u_Material.NormalMap", normalMapDefault);
+		}
+
+		Material::Sptr winMat = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			winMat->Name = "win";
+			winMat->Set("u_Material.AlbedoMap", winTex);
+			winMat->Set("u_Material.Shininess", 0.1f);
+			winMat->Set("u_Material.NormalMap", normalMapDefault);
+		}
+
+		Material::Sptr loseMat = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			loseMat->Name = "lose";
+			loseMat->Set("u_Material.AlbedoMap", loseTex);
+			loseMat->Set("u_Material.Shininess", 0.1f);
+			loseMat->Set("u_Material.NormalMap", normalMapDefault);
 		}
 
 		// Create some lights for our scene
