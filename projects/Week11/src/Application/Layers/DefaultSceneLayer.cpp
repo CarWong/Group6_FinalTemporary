@@ -520,7 +520,7 @@ void DefaultSceneLayer::_CreateScene()
 
 		GameObject::Sptr ball = scene->CreateGameObject("ball");
 		{
-			ball->SetPostion(glm::vec3(0.0f, 0.0f, 0.0f));
+			ball->SetPostion(glm::vec3(2.5f, -0.23f, 5.3f));
 			ball->SetRotation(glm::vec3(90.f, 0.f, 0.f));
 			ball->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 			
@@ -531,7 +531,7 @@ void DefaultSceneLayer::_CreateScene()
 			Gameplay::Physics::TriggerVolume::Sptr volume = ball->Add<Gameplay::Physics::TriggerVolume>();
 			Gameplay::Physics::BoxCollider::Sptr box = Gameplay::Physics::BoxCollider::Create();
 			
-			box->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+			box->SetPosition(glm::vec3(2.5f, -0.23f, 5.3f));
 			box->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 			volume->AddCollider(box);
 
@@ -541,7 +541,7 @@ void DefaultSceneLayer::_CreateScene()
 			ParticleSystem::Sptr particleManager = particlesBall->Add<ParticleSystem>();
 			particleManager->Atlas = particleTex;
 
-			particleManager->_gravity = glm::vec3(0.0f);
+			particleManager->_gravity = glm::vec3(9.0f, 0.0f, 8.0f);
 
 			ParticleSystem::ParticleData emitter;
 			emitter.Type = ParticleType::SphereEmitter;
