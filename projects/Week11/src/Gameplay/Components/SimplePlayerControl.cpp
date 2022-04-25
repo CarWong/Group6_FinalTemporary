@@ -32,11 +32,6 @@ void SimplePlayerControl::Update(float deltaTime)
 		if (!InputEngine::IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) 
 		{
 		}
-
-		glm::vec3 _forwardVector = GetGameObject()->GetPosition() - cameraAttached->GetPosition();
-		_forwardVector = glm::normalize(_forwardVector);
-
-		glm::quat rotX;
 		glm::vec3 _moveVector = glm::vec3(0.0f);
 
 		Gameplay::Physics::RigidBody::Sptr physics = GetGameObject()->Get<Gameplay::Physics::RigidBody>();
@@ -44,10 +39,12 @@ void SimplePlayerControl::Update(float deltaTime)
 		//movement commands for left and right
 		if (InputEngine::IsKeyDown(GLFW_KEY_A)) 
 		{
+			_moveVector = glm::vec3(3.0f, 0.0f, 0.0f);
 		}
 
 		if (InputEngine::IsKeyDown(GLFW_KEY_D)) 
 		{
+			_moveVector = glm::vec3(-3.0f, 0.0f, 0.0f);
 		}
 
 		_moveVector.z = 0.0f;
@@ -72,7 +69,7 @@ void SimplePlayerControl::RenderImGui()
 
 nlohmann::json SimplePlayerControl::ToJson() const
 {
-	return { };
+	return {};
 }
 
 SimplePlayerControl::Sptr SimplePlayerControl::FromJson(const nlohmann::json & blob)
