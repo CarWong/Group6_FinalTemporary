@@ -546,7 +546,7 @@ void DefaultSceneLayer::_CreateScene()
 			ParticleSystem::Sptr particleManager = particlesBall->Add<ParticleSystem>();
 			particleManager->Atlas = particleTex;
 
-			particleManager->_gravity = glm::vec3(9.0f, 0.0f, 8.0f);
+			particleManager->_gravity = glm::vec3(0.0f);
 
 			ParticleSystem::ParticleData emitter;
 			emitter.Type = ParticleType::SphereEmitter;

@@ -32,7 +32,7 @@ namespace Gameplay {
 		_skyboxTexture(nullptr),
 		_skyboxRotation(glm::mat3(1.0f)),
 		_ambientLight(glm::vec3(0.1f)),
-		_gravity(glm::vec3(0.0f, 0.2f, -9.81f))
+		_gravity(glm::vec3(0.0f, 0.42f, -9.81f))
 	{
 		GameObject::Sptr mainCam = CreateGameObject("Main Camera");		
 		MainCamera = mainCam->Add<Camera>();
