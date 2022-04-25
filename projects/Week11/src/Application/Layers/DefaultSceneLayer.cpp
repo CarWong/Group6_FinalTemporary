@@ -158,9 +158,11 @@ void DefaultSceneLayer::_CreateScene()
 
 		//Final Textures & Meshes
 		MeshResource::Sptr sqrMesh = ResourceManager::CreateAsset<MeshResource>("platform2.obj");
+		MeshResource::Sptr mainChar = ResourceManager::CreateAsset<MeshResource>("trashy.obj");
 		
 		Texture2D::Sptr platformTex = ResourceManager::CreateAsset<Texture2D>("textures/Platform.png");
 		Texture2D::Sptr lavaTex = ResourceManager::CreateAsset<Texture2D>("textures/beans.png");
+		Texture2D::Sptr mainCharTex = ResourceManager::CreateAsset<Texture2D>("textures/trashyTEX.png");
 		
 
 		//DebugWindow::Sptr debugWindow = app.GetLayer<ImGuiDebugLayer>()->GetWindow<DebugWindow>();
@@ -353,6 +355,14 @@ void DefaultSceneLayer::_CreateScene()
 			lavaMat->Set("u_Material.NormalMap", normalMapDefault);
 		}
 
+		Material::Sptr mainCharMat = ResourceManager::CreateAsset<Material>(deferredForward);
+		{
+			mainCharMat->Name = "main character";
+			mainCharMat->Set("u_Material.AlbedoMap", mainCharTex);
+			mainCharMat->Set("u_Material.Shininess", 0.1f);
+			mainCharMat->Set("u_Material.NormalMap", normalMapDefault);
+		}
+
 		// Create some lights for our scene
 		GameObject::Sptr lightParent = scene->CreateGameObject("Lights");
 
@@ -524,8 +534,8 @@ void DefaultSceneLayer::_CreateScene()
 		GameObject::Sptr shadowCaster = scene->CreateGameObject("Shadow Light");
 		{
 			// Set position in the scene
-			shadowCaster->SetPostion(glm::vec3(13.48f, -2.56f, 7.42f));
-			shadowCaster->SetRotation(glm::vec3(44.f, 72.f, -19.f));
+			shadowCaster->SetPostion(glm::vec3(-25.4f, -5.f, 9.73f));
+			shadowCaster->SetRotation(glm::vec3(100.f, 23.f, -89.f));
 
 			// Create and attach a renderer for the monkey
 			ShadowCamera::Sptr shadowCam = shadowCaster->Add<ShadowCamera>();
