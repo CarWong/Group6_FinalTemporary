@@ -522,7 +522,7 @@ void DefaultSceneLayer::_CreateScene()
 		{
 			ball->SetPostion(glm::vec3(0.0f, 0.0f, 0.0f));
 			ball->SetRotation(glm::vec3(90.f, 0.f, 0.f));
-			ball->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+			ball->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 			
 			RenderComponent::Sptr renderer = ball->Add<RenderComponent>();
 			renderer->SetMesh(sqrMesh);
@@ -532,7 +532,7 @@ void DefaultSceneLayer::_CreateScene()
 			Gameplay::Physics::BoxCollider::Sptr box = Gameplay::Physics::BoxCollider::Create();
 			
 			box->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-			box->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+			box->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 			volume->AddCollider(box);
 
 		}
